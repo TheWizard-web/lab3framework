@@ -30,3 +30,44 @@ DB_DATABASE=todo_app
 DB_USERNAME=root
 DB_PASSWORD=root ```
 ````
+
+## №2. Crearea modelelor și migrațiilor
+
+1. Creați modelul Category — categoria unei sarcini.
+
+    - `php artisan make:model Category -m`
+
+2. Definirea structurii tabelei category în migrație:
+
+\*\*Adăugați câmpuri:
+
+-   id — cheia primară;
+-   name — numele categoriei;
+-   description — descrierea categoriei;
+-   created_at — data creării categoriei;
+-   updated_at — data actualizării categoriei.
+
+3. Creați modelul Task — sarcina.
+
+4. Definirea structurii tabelei task în migrație:
+
+Adăugați câmpuri:
+
+id — cheia primară;
+title — titlul sarcinii;
+description — descrierea sarcinii;
+created_at — data creării sarcinii;
+updated_at — data actualizării sarcinii.
+
+5. Rulați migrarea pentru a crea tabelele în baza de date:
+
+php artisan migrate 6. Creați modelul Tag — eticheta unei sarcini.
+
+7. Definirea structurii tabelei tag în migrație:
+   Adăugați câmpuri:
+   id — cheia primară;
+   name — numele etichetei;
+   created_at — data creării etichetei;
+   updated_at — data actualizării etichetei.
+
+8. Adăugați câmpul $fillable în modelele Task, Category și Tag pentru a permite atribuirea în masă a datelor.
