@@ -61,7 +61,7 @@ Adăugați câmpuri:
 
 5. Rulați migrarea pentru a crea tabelele în baza de date:
 
--   `php artisan migrate`
+    - `php artisan migrate`
 
 6. Creați modelul `Tag` — eticheta unei sarcini.
 
