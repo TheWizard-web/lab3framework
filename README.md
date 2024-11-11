@@ -10,7 +10,7 @@ Familiarizarea cu principiile de bază ale lucrului cu baze de date în Laravel.
 
 Veți adăuga funcționalitatea de lucru cu baza de date, veți crea modele și migrații, veți configura relațiile dintre modele și veți învăța să utilizați fabrici și seed-uri pentru generarea datelor de testare.
 
-### №1. Pregătirea pentru lucru
+## №1. Pregătirea pentru lucru
 
 ## Pași realizați pentru configurarea bazei de date:
 
@@ -22,3 +22,11 @@ Veți adăuga funcționalitatea de lucru cu baza de date, veți crea modele și 
 
 3. Configurarea variabilelor de mediu în fișierul `.env`
    În fișierul `.env`, am configurat variabilele de mediu pentru a conecta aplicația la baza de date:
+
+````DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=todo_app
+DB_USERNAME=root
+DB_PASSWORD=root ```
+````
