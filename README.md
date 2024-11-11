@@ -39,7 +39,7 @@ DB_PASSWORD=root ```
 
 2. Definirea structurii tabelei category în migrație:
 
-\*\*Adăugați câmpuri:
+Adăugați câmpuri:
 
 -   id — cheia primară;
 -   name — numele categoriei;
@@ -53,11 +53,11 @@ DB_PASSWORD=root ```
 
 Adăugați câmpuri:
 
-id — cheia primară;
-title — titlul sarcinii;
-description — descrierea sarcinii;
-created_at — data creării sarcinii;
-updated_at — data actualizării sarcinii.
+-   id — cheia primară;
+-   title — titlul sarcinii;
+-   description — descrierea sarcinii;
+-   created_at — data creării sarcinii;
+-   updated_at — data actualizării sarcinii.
 
 5. Rulați migrarea pentru a crea tabelele în baza de date:
 
