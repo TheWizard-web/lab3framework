@@ -54,14 +54,15 @@ Adăugați câmpuri:
 
 ```php
 public function up(): void
- {
+   {
      Schema::create('categories', function (Blueprint $table) {
          $table->id(); //cheia primara
          $table->string('name');  // numele categoriei
          $table->text('description')->nullable();  // descrierea categoriei
          $table->timestamps(); //timpul si data de actualizare
-     });
-}
+   });
+   }
+```
 
 Tot odată pentru a preveni atacurile de tip _mass assignment_ am utilizat variabila `$fillable` în În modelul `Category` (fișierul `app/Models/Category.php`) pentru a specifica exact care câmpuri sunt permise pentru atribuire în masă, reducând riscul de acces neautorizat la alte câmpuri.
 
@@ -93,5 +94,3 @@ Adăugați câmpuri:
    updated_at — data actualizării etichetei.
 
 8. Adăugați câmpul $fillable în modelele Task, Category și Tag pentru a permite atribuirea în masă a datelor.
-
-```
