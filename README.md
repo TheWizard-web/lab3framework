@@ -323,8 +323,6 @@ Acest cod va genera 10 sarcini, fiecare având câmpurile `title` și `descripti
    `php artisan make:factory TagFactory --model=Tag`
 
 ```php
-<?php
-
 namespace Database\Factories;
 
 use App\Models\Tag;
@@ -408,3 +406,80 @@ public function run()
 `php artisan db:seed`
 
 Urmând acești pași am creat date fictive pentru modelele `Category`, `Task` și `Tag` în baza de date, pentru a putea lucra cu ele mai departe în aplicație.
+
+## №6. Lucrul cu controlere și vizualizări
+
+1. Deschideți controlerul `TaskController` (`app/Http/Controllers/TaskController.php`).
+
+2. Actualizați metoda index pentru a obține lista sarcinilor din baza de date.
+
+    - Folosiți modelul `Task` pentru a obține toate sarcinile.
+
+3. Actualizați metoda `show` pentru a afișa o sarcină individuală.
+
+    - Afișați informațiile despre sarcină după identificatorul acesteia.
+    - **Obligatoriu** afișați categoria și etichetele sarcinii.
+
+4. În metodele `index` și `show`, folosiți metoda with (**Eager Loading**) pentru a încărca modelele asociate.
+
+5. Actualizați vizualizările corespunzătoare pentru a afișa lista de sarcini și o sarcină individuală.
+
+6. Actualizați metoda create pentru a afișa formularul de creare a unei sarcini și metoda store pentru a salva o sarcină nouă în baza de date.
+
+    - **Notă**: Deoarece nu ați studiat încă formularele, folosiți obiectul Request pentru a obține datele. **De exemplu**:
+
+```php
+$request->input('title');
+// sau
+$request->all();
+```
+
+7. Actualizați metoda `edit` pentru a afișa formularul de editare a unei sarcini și metoda `update` pentru a salva modificările în baza de date.
+
+8. Actualizați metoda `destroy` pentru a șterge o sarcină din baza de date.
+
+## Sarcini Suplimentare
+
+1. Creați modelul `Comment` pentru comentariile sarcinilor.
+
+    - Adăugați câmpurile corespunzătoare în migrare.
+    - Creați relații între modelele Task și Comment.
+
+2. Adăugați posibilitatea de a adăuga comentarii la sarcini.
+
+    - Actualizați vizualizarea pentru a afișa comentariile unei sarcini și pentru a vizualiza lista de comentarii și comentariul după `id`: `/task/{id}/comment, /task/{id}/comment/{comment_id}`.
+
+3. Adăugați posibilitatea de a adăuga etichete la sarcini și folosiți tranzacții pentru a salva relațiile dintre sarcini și etichete.
+
+```php
+DB::transaction(function () use ($request) {
+    // Crearea sarcinii
+    // Legarea etichetelor la sarcină
+});
+```
+
+## Întrebări de control
+
+1. Ce sunt migrațiile și la ce se folosesc?
+
+    - Migrațiile sunt fișiere care permit modificarea structurii bazei de date într-un mod controlat și ușor de urmărit. Acestea sunt folosite pentru a adăuga, modifica sau șterge tabele și coloane, asigurându-se că baza de date poate fi actualizată pe parcursul dezvoltării aplicației.
+
+2. Ce sunt fabricile și seed-urile și cum simplifică procesul de dezvoltare și testare?
+
+    - Fabricile sunt folosite pentru a crea date fictive pentru modelele tale. Seed-urile sunt folosite pentru a popula baza de date cu date de test sau cu date inițiale. Acestea simplifică dezvoltarea și testarea prin generarea rapidă a datelor necesare fără a fi nevoie să le introduci manual.
+
+3. Ce este ORM? Care sunt diferențele dintre pattern-urile `DataMapper` și `ActiveRecord`?
+
+    - ORM (Object-Relational Mapping) este o tehnică care permite interacționarea cu baza de date folosind obiecte în loc de interogări SQL.
+
+    **ActiveRecord** combină logica aplicației cu manipularea datelor. Fiecare obiect reprezintă un rând dintr-o tabelă.
+
+    **DataMapper** separă logica aplicației de manipularea datelor. Obiectele sunt separate de structura bazei de date.
+
+4. Care sunt avantajele utilizării unui ORM comparativ cu interogările SQL directe?
+
+    - Utilizarea unui ORM ajută la simplificarea interacțiunii cu baza de date, oferind un mod mai intuitiv și mai sigur de a lucra cu datele, fără a scrie manual interogări SQL. Acesta reduce erorile, îmbunătățește lizibilitatea codului și face aplicația mai ușor de întreținut.
+
+5. Ce sunt tranzacțiile și de ce sunt importante în lucrul cu bazele de date?
+
+    - Tranzacțiile sunt un set de operațiuni care sunt executate împreună. Dacă oricare dintre aceste operațiuni eșuează, toate sunt anulate, pentru a păstra integritatea bazei de date. Sunt importante pentru a asigura că datele rămân consistente și corecte, chiar și în caz de erori sau probleme.
