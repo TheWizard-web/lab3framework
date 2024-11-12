@@ -23,13 +23,14 @@ Veți adăuga funcționalitatea de lucru cu baza de date, veți crea modele și 
 3. Configurarea variabilelor de mediu în fișierul `.env`
    În fișierul `.env`, am configurat variabilele de mediu pentru a conecta aplicația la baza de date:
 
-````DB_CONNECTION=mysql
+````sql
+DB_CONNECTION=mysql
 DB_HOST=127.0.0.1
 DB_PORT=3306
 DB_DATABASE=todo_app
 DB_USERNAME=root
 DB_PASSWORD=root ```
-````
+
 
 ## №2. Crearea modelelor și migrațiilor
 
@@ -51,17 +52,18 @@ Adăugați câmpuri:
 
 În interiorul fișierului de migrație pentru modelul `Category` din folderul `database/migrations`creat automat de Laravel am definit structura tabelului :
 
-````public function up(): void
-    {
-        Schema::create('categories', function (Blueprint $table) {
-            $table->id(); //cheia primara
-            $table->string('name');  // numele categoriei
-            $table->text('description')->nullable();  // descrierea categoriei
-            $table->timestamps(); //timpul si data de actualizare
-        });
-}```
+```php
+public function up(): void
+ {
+     Schema::create('categories', function (Blueprint $table) {
+         $table->id(); //cheia primara
+         $table->string('name');  // numele categoriei
+         $table->text('description')->nullable();  // descrierea categoriei
+         $table->timestamps(); //timpul si data de actualizare
+     });
+}
 
-Tot odată pentru a preveni atacurile de tip *mass assignment* am utilizat variabila `$fillable` în În modelul `Category` (fișierul `app/Models/Category.php`) pentru a specifica exact care câmpuri sunt permise pentru atribuire în masă, reducând riscul de acces neautorizat la alte câmpuri.
+Tot odată pentru a preveni atacurile de tip _mass assignment_ am utilizat variabila `$fillable` în În modelul `Category` (fișierul `app/Models/Category.php`) pentru a specifica exact care câmpuri sunt permise pentru atribuire în masă, reducând riscul de acces neautorizat la alte câmpuri.
 
 `protected $fillable = ['name', 'description'];`
 
@@ -79,7 +81,7 @@ Adăugați câmpuri:
 
 5. Rulați migrarea pentru a crea tabelele în baza de date:
 
-    - `php artisan migrate`
+-   `php artisan migrate`
 
 6. Creați modelul `Tag` — eticheta unei sarcini.
 
