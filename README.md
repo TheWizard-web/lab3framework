@@ -257,3 +257,19 @@ Adăugarea lui `category_id` în câmpul `$fillable` al modelului `Task` este ne
 -   În Tag.php:
 
 `protected $fillable = ['name'];`
+
+## №5. Crearea fabricilor și seed-urilor
+
+1. Creați o fabrică pentru modelul `Category`:
+
+    - `php artisan make:factory CategoryFactory --model=Category`
+    - Definiți structura datelor pentru generarea categoriilor.
+
+2. Creați o fabrică pentru modelul `Task`.
+
+3. Creați o fabrică pentru modelul `Tag`.
+
+4. Creați seed-uri pentru a popula tabelele cu date inițiale pentru modelele `Category`, `Task`, `Tag`.
+
+5. Actualizați fișierul `DatabaseSeeder` pentru a lansa seed-urile și rulați-le:
+   `php artisan db:seed`
