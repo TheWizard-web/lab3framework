@@ -70,6 +70,8 @@ Tot odată pentru a preveni atacurile de tip _mass assignment_ am utilizat varia
 
 3. Creați modelul Task — sarcina.
 
+`php artisan make:model Task -m`
+
 4. Definirea structurii tabelei task în migrație:
 
 Adăugați câmpuri:
@@ -80,17 +82,52 @@ Adăugați câmpuri:
 -   created_at — data creării sarcinii;
 -   updated_at — data actualizării sarcinii.
 
+```php
+public function up(): void
+    {
+        Schema::create('tasks', function (Blueprint $table) {
+            $table->id();
+            $table->string('title');
+            $table->text('description')->nullable();
+            $table->timestamps();
+        });
+    }
+```
+
+Adăugaarea câmpului `$fillable` :
+`protected $fillable = ['title', 'description'];`
+
 5. Rulați migrarea pentru a crea tabelele în baza de date:
 
 -   `php artisan migrate`
 
 6. Creați modelul `Tag` — eticheta unei sarcini.
 
+`php artisan make:model Tag -m`
+
 7. Definirea structurii tabelei **tag** în migrație:
-   Adăugați câmpuri:
-   id — cheia primară;
-   name — numele etichetei;
-   created_at — data creării etichetei;
-   updated_at — data actualizării etichetei.
+
+    Adăugați câmpuri:
+
+    - id — cheia primară;
+    - name — numele etichetei;
+    - created_at — data creării etichetei;
+    - updated_at — data actualizării etichetei.
+
+```php
+public function up(): void
+    {
+        Schema::create('tags', function (Blueprint $table) {
+            $table->id();
+            $table->string('name');
+            $table->timestamps();
+        });
+    }
+```
+
+Adăugaarea câmpului `$fillable` :
+`protected $fillable = ['name'];`
 
 8. Adăugați câmpul $fillable în modelele Task, Category și Tag pentru a permite atribuirea în masă a datelor.
+
+## №3. Relația dintre tabele
