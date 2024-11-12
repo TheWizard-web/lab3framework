@@ -131,3 +131,20 @@ Adăugaarea câmpului `$fillable` :
 8. Adăugați câmpul $fillable în modelele Task, Category și Tag pentru a permite atribuirea în masă a datelor.
 
 ## №3. Relația dintre tabele
+
+1. Creați o migrare pentru a adăuga câmpul category_id în tabela _task_.
+
+    - `php artisan make:migration add_category_id_to_tasks_table --table=tasks`
+    - Definiți structura câmpului category_id și adăugați cheia externă pentru a face legătura cu tabela
+      `category`.
+
+2. Creați o tabelă intermediară pentru relația de tipul multe-la-multe dintre sarcini și etichete:
+
+    - `php artisan make:migration create_task_tag_table`
+
+3. Definirea structurii corespunzătoare a tabelei în migrație.
+
+    - Această tabelă trebuie să lege sarcinile și etichetele prin identificatorii lor.
+    - Exemplu: `task_id` și `tag_id`: sarcina 10 este legată de eticheta 5.
+
+4. Rulați migrarea pentru a crea tabela în baza de date.
