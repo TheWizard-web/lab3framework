@@ -132,13 +132,37 @@ Adăugaarea câmpului `$fillable` :
 
 ## №3. Relația dintre tabele
 
-1. Creați o migrare pentru a adăuga câmpul category_id în tabela _task_.
+1. Creați o migrare pentru a adăuga câmpul category*id în tabela \_task*.
 
     - `php artisan make:migration add_category_id_to_tasks_table --table=tasks`
     - Definiți structura câmpului category_id și adăugați cheia externă pentru a face legătura cu tabela
       `category`.
 
-2. Creați o tabelă intermediară pentru relația de tipul multe-la-multe dintre sarcini și etichete:
+Codul adaugat în fișierul migrației nou create în `database/migrations` :
+
+```php
+public function up(): void
+    {
+        Schema::table('tasks', function (Blueprint $table) {
+            $table->unsignedBigInteger('category_id')->nullable(); // câmpul category_id
+            $table->foreign('category_id')->references('id')->on('categories')->onDelete('set null'); // cheia externă
+        });
+    }
+```
+
+```php
+public function down(): void
+    {
+        Schema::table('tasks', function (Blueprint $table) {
+            $table->dropForeign(['category_id']);  // elimină cheia externă
+        $table->dropColumn('category_id');    // elimină câmpul category_id
+        });
+    };
+```
+
+Aceasta va adăuga câmpul `category_id` în tabela `tasks` și va crea o relație de tipul `many-to-one` între `tasks` și `categories`.
+
+2. Creați o tabelă intermediară pentru relația de tipul multe-la-multe dintre sarcini(tasks) și etichete(tags):
 
     - `php artisan make:migration create_task_tag_table`
 
@@ -147,4 +171,25 @@ Adăugaarea câmpului `$fillable` :
     - Această tabelă trebuie să lege sarcinile și etichetele prin identificatorii lor.
     - Exemplu: `task_id` și `tag_id`: sarcina 10 este legată de eticheta 5.
 
+```php
+public function up(): void
+    {
+        Schema::create('task_tag', function (Blueprint $table) {
+            $table->id();
+            $table->unsignedBigInteger('task_id');  // câmpul pentru id-ul sarcinii
+            $table->unsignedBigInteger('tag_id');   // câmpul pentru id-ul etichetei
+            $table->timestamps();
+
+        $table->foreign('task_id')->references('id')->on('tasks')->onDelete('cascade'); // relație cu tasks
+        $table->foreign('tag_id')->references('id')->on('tags')->onDelete('cascade');   // relație cu tags
+
+        // Definirea unui index unic pentru a preveni duplicatele
+        $table->unique(['task_id', 'tag_id']);
+        });
+    }
+```
+
+Aceasta va crea o tabelă intermediară care leagă `tasks` și `tags` prin câmpurile `task_id` și `tag_id`. De asemenea, sunt stabilite relațiile corespunzătoare pentru ștergerea în cascadă a înregistrărilor.
+
 4. Rulați migrarea pentru a crea tabela în baza de date.
+   ![rezultate_creare_relatiitab](image-1.png)
