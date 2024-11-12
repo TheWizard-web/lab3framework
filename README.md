@@ -59,7 +59,7 @@ Adăugați câmpuri:
             $table->text('description')->nullable();  // descrierea categoriei
             $table->timestamps(); //timpul si data de actualizare
         });
-    }```
+}```
 
 Tot odată pentru a preveni atacurile de tip *mass assignment* am utilizat variabila `$fillable` în În modelul `Category` (fișierul `app/Models/Category.php`) pentru a specifica exact care câmpuri sunt permise pentru atribuire în masă, reducând riscul de acces neautorizat la alte câmpuri.
 
