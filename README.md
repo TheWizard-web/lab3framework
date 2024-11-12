@@ -216,7 +216,7 @@ Aceasta va crea o tabelă intermediară care leagă `tasks` și `tags` prin câm
 
     Am adaugat relația `belongsTo` pentru a indica că o sarcină este asociată unei categorii.
 
-    Am adaugat și relația belongsToMany pentru a lega sarcinile de etichete (relația many-to-many`):
+    Am adaugat și relația belongsToMany pentru a lega sarcinile de etichete (relația `many-to-many`):
 
 ```php
 public function category()
