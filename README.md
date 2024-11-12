@@ -23,14 +23,14 @@ Veți adăuga funcționalitatea de lucru cu baza de date, veți crea modele și 
 3. Configurarea variabilelor de mediu în fișierul `.env`
    În fișierul `.env`, am configurat variabilele de mediu pentru a conecta aplicația la baza de date:
 
-````sql
+```
 DB_CONNECTION=mysql
 DB_HOST=127.0.0.1
 DB_PORT=3306
 DB_DATABASE=todo_app
 DB_USERNAME=root
-DB_PASSWORD=root ```
-
+DB_PASSWORD=root
+```
 
 ## №2. Crearea modelelor și migrațiilor
 
@@ -93,4 +93,5 @@ Adăugați câmpuri:
    updated_at — data actualizării etichetei.
 
 8. Adăugați câmpul $fillable în modelele Task, Category și Tag pentru a permite atribuirea în masă a datelor.
-````
+
+```
