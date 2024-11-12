@@ -193,3 +193,24 @@ Aceasta va crea o tabelă intermediară care leagă `tasks` și `tags` prin câm
 
 4. Rulați migrarea pentru a crea tabela în baza de date.
    ![rezultate_creare_relatiitab](image-1.png)
+
+## №4. Relațiile dintre modele
+
+1. Adăugați relații în modelul `Category` (O categorie poate avea multe sarcini)
+
+    - Deschideți modelul Category și adăugați metoda:
+
+```php
+   public function tasks()
+   {
+   return $this->hasMany(Task::class);
+   }
+```
+
+2. Adăugați relații în modelul Task
+
+    - Sarcina este legată de o categorie.
+    - Sarcina poate avea multe etichete.
+
+3. Adăugați relații în modelul Tag (O etichetă poate fi legată de multe sarcini).
+4. Adăugați câmpurile corespunzătoare în $fillable ale modelelor.
