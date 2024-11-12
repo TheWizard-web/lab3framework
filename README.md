@@ -214,5 +214,46 @@ Aceasta va crea o tabelă intermediară care leagă `tasks` și `tags` prin câm
     - Sarcina este legată de o categorie.
     - Sarcina poate avea multe etichete.
 
+    Am adaugat relația `belongsTo` pentru a indica că o sarcină este asociată unei categorii.
+
+    Am adaugat și relația belongsToMany pentru a lega sarcinile de etichete (relația many-to-many`):
+
+```php
+public function category()
+{
+    return $this->belongsTo(Category::class);
+}
+
+public function tags()
+{
+    return $this->belongsToMany(Tag::class);
+}
+```
+
 3. Adăugați relații în modelul Tag (O etichetă poate fi legată de multe sarcini).
-4. Adăugați câmpurile corespunzătoare în $fillable ale modelelor.
+
+    Adaugă metodei `tasks()` pentru a defini relația `many-to-many`:
+
+    ```php
+    public function tasks()
+    {
+     return $this->belongsToMany(Task::class);
+    }
+
+    ```
+
+4. Adăugați câmpurile corespunzătoare în `$fillable` ale modelelor.
+
+    - În Category.php:
+
+`protected $fillable = ['name', 'description'];`
+
+-   În Task.php:
+
+`protected $fillable = ['title', 'description', 'category_id'];`
+
+Adăugarea lui `category_id` în câmpul `$fillable` al modelului `Task` este necesară pentru că acest câmp reprezintă legătura între `Task` și `Category`.
+
+-   În Tag.php:
+
+`protected $fillable = ['name'];`
