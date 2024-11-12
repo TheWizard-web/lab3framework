@@ -265,11 +265,146 @@ Adăugarea lui `category_id` în câmpul `$fillable` al modelului `Task` este ne
     - `php artisan make:factory CategoryFactory --model=Category`
     - Definiți structura datelor pentru generarea categoriilor.
 
+```php
+
+namespace Database\Factories;
+
+use App\Models\Category;
+use Illuminate\Database\Eloquent\Factories\Factory;
+use Faker\Generator as Faker;
+
+class CategoryFactory extends Factory
+{
+    protected $model = Category::class;
+
+    public function definition()
+    {
+        return [
+            'name' => $this->faker->word,
+            'description' => $this->faker->sentence,
+        ];
+    }
+}
+
+```
+
+Acest cod va genera 10 categorii fictive, fiecare cu câmpurile `name` și `description` completate automat folosind `Faker`.
+
 2. Creați o fabrică pentru modelul `Task`.
+   `php artisan make:factory TaskFactory --model=Task`
+
+```php
+namespace Database\Factories;
+
+use App\Models\Task;
+use App\Models\Category;
+use Illuminate\Database\Eloquent\Factories\Factory;
+use Faker\Generator as Faker;
+
+class TaskFactory extends Factory
+{
+    protected $model = Task::class;
+
+    public function definition()
+    {
+        return [
+            'title' => $this->faker->sentence,
+            'description' => $this->faker->paragraph,
+            'category_id' => Category::factory(), // Asociere cu o categorie generată
+        ];
+    }
+}
+
+```
+
+Acest cod va genera 10 sarcini, fiecare având câmpurile `title` și `description` completate și asociate unei categorii fictive prin `category_id`.
 
 3. Creați o fabrică pentru modelul `Tag`.
+   `php artisan make:factory TagFactory --model=Tag`
+
+```php
+<?php
+
+namespace Database\Factories;
+
+use App\Models\Tag;
+use Illuminate\Database\Eloquent\Factories\Factory;
+use Faker\Generator as Faker;
+
+class TagFactory extends Factory
+{
+    protected $model = Tag::class;
+
+    public function definition()
+    {
+        return [
+            'name' => $this->faker->word,
+        ];
+    }
+}
+
+```
+
+Acest cod va genera 10 tag-uri, fiecare având câmpul `name` completat cu un cuvânt fictiv.
 
 4. Creați seed-uri pentru a popula tabelele cu date inițiale pentru modelele `Category`, `Task`, `Tag`.
 
+`php artisan make:seeder CategorySeeder`
+
+```php
+use App\Models\Category;
+
+public function run()
+{
+    Category::factory()->count(10)->create();
+}
+
+```
+
+`php artisan make:seeder TaskSeeder`
+
+```php
+use App\Models\Task;
+
+public function run()
+{
+    Task::factory()->count(50)->create();
+}
+
+```
+
+`php artisan make:seeder TagSeeder`
+
+```php
+use App\Models\Tag;
+
+public function run()
+{
+    Tag::factory()->count(20)->create();
+}
+
+```
+
 5. Actualizați fișierul `DatabaseSeeder` pentru a lansa seed-urile și rulați-le:
-   `php artisan db:seed`
+
+```php
+use Illuminate\Database\Seeder;
+
+use App\Models\Category;
+use App\Models\Task;
+use App\Models\Tag;
+
+public function run()
+{
+    $this->call([
+        CategorySeeder::class,
+        TaskSeeder::class,
+        TagSeeder::class,
+    ]);
+}
+
+```
+
+`php artisan db:seed`
+
+Urmând acești pași am creat date fictive pentru modelele `Category`, `Task` și `Tag` în baza de date, pentru a putea lucra cu ele mai departe în aplicație.
