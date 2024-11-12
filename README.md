@@ -132,7 +132,7 @@ Adăugaarea câmpului `$fillable` :
 
 ## №3. Relația dintre tabele
 
-1. Creați o migrare pentru a adăuga câmpul category*id în tabela \_task*.
+1. Creați o migrare pentru a adăuga câmpul `category_id` în tabela _task_.
 
     - `php artisan make:migration add_category_id_to_tasks_table --table=tasks`
     - Definiți structura câmpului category_id și adăugați cheia externă pentru a face legătura cu tabela
@@ -193,6 +193,8 @@ Aceasta va crea o tabelă intermediară care leagă `tasks` și `tags` prin câm
 
 4. Rulați migrarea pentru a crea tabela în baza de date.
    ![rezultate_creare_relatiitab](image-1.png)
+
+    ![relatii_tabele](image-2.png)
 
 ## №4. Relațiile dintre modele
 
