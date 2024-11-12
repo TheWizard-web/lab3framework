@@ -33,12 +33,13 @@ DB_PASSWORD=root ```
 
 ## №2. Crearea modelelor și migrațiilor
 
-1. Creați modelul Category — categoria unei sarcini.
+1.  Creați modelul Category — categoria unei sarcini.
 
-    - `php artisan make:model Category -m`
-      ![model_category](image.png)
+        - `php artisan make:model Category -m`
 
-2. Definirea structurii tabelei category în migrație:
+    ![model_category](image.png)
+
+2.  Definirea structurii tabelei category în migrație:
 
 Adăugați câmpuri:
 
