@@ -49,6 +49,22 @@ Adăugați câmpuri:
 -   created_at — data creării categoriei;
 -   updated_at — data actualizării categoriei.
 
+În interiorul fișierului de migrație pentru modelul `Category` din folderul `database/migrations`creat automat de Laravel am definit structura tabelului :
+
+````public function up(): void
+    {
+        Schema::create('categories', function (Blueprint $table) {
+            $table->id(); //cheia primara
+            $table->string('name');  // numele categoriei
+            $table->text('description')->nullable();  // descrierea categoriei
+            $table->timestamps(); //timpul si data de actualizare
+        });
+    }```
+
+Tot odată pentru a preveni atacurile de tip *mass assignment* am utilizat variabila `$fillable` în În modelul `Category` (fișierul `app/Models/Category.php`) pentru a specifica exact care câmpuri sunt permise pentru atribuire în masă, reducând riscul de acces neautorizat la alte câmpuri.
+
+`protected $fillable = ['name', 'description'];`
+
 3. Creați modelul Task — sarcina.
 
 4. Definirea structurii tabelei task în migrație:
@@ -75,3 +91,4 @@ Adăugați câmpuri:
    updated_at — data actualizării etichetei.
 
 8. Adăugați câmpul $fillable în modelele Task, Category și Tag pentru a permite atribuirea în masă a datelor.
+````

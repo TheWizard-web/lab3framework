@@ -12,8 +12,10 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('categories', function (Blueprint $table) {
-            $table->id();
-            $table->timestamps();
+            $table->id(); //cheia primara
+            $table->string('name');  // numele categoriei
+            $table->text('description')->nullable();  // descrierea categoriei
+            $table->timestamps(); //timpul si data de actualizare
         });
     }
 
