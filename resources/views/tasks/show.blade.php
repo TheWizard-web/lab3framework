@@ -2,21 +2,29 @@
 
 @section('content')
     <div class="container mx-auto p-8">
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            @foreach ($tasks as $task)
-                <x-task 
-                    title="{{ $task['title'] }}" 
-                    description="{{ $task['description'] }}"
-                    createdAt="{{ $task['created_at'] }}"
-                    updatedAt="{{ $task['updated_at'] }}"
-                    status="{{ $task['status'] }}"
-                    priority="{{ $task['priority'] }}"
-                    assignedTo="{{ $task['assigned_to'] }}"
-                    id="{{ $task['id'] }}"
-                />
-            @endforeach
+        <div class="max-w-2xl mx-auto bg-white shadow-lg rounded-lg p-6">
+            <h1 class="text-3xl font-bold text-gray-800 mb-4">{{ $task->title }}</h1>
+            
+            <p class="text-gray-600 mb-4">{{ $task->description }}</p>
+            
+            <p class="text-sm text-gray-500 mb-2">
+                <strong>Category:</strong> {{ $task->category->name ?? 'None' }}
+            </p>
+            
+            <p class="text-sm text-gray-500 mb-4">
+                <strong>Tags:</strong>
+                @foreach ($task->tags as $tag)
+                    <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-xs">{{ $tag->name }}</span>
+                @endforeach
+            </p>
+            
+            <p class="text-sm text-gray-500">
+                <strong>Created at:</strong> {{ $task->created_at->format('d-m-Y H:i') }}
+            </p>
+            
+            <p class="text-sm text-gray-500">
+                <strong>Last updated:</strong> {{ $task->updated_at->format('d-m-Y H:i') }}
+            </p>
         </div>
     </div>
 @endsection
-
-

@@ -511,6 +511,100 @@ La punctele anterioare am folosit`with(['category', 'tags'])` pentru a încărca
 
 5. Actualizați vizualizările corespunzătoare pentru a afișa lista de sarcini și o sarcină individuală.
 
+Inițial, fișierul`index.blade.php`afișa doar titlul sarcinilor preluate dintr-un array static. După modificările în controler, datele sunt acum preluate din baza de date, iar fiecare sarcină conține relațiile sale.
+
+În urma modificărilor:
+
+-   **Accesarea relațiilor `category` și `tags`**:
+    Am adăugat afișarea categoriei și a etichetelor pentru fiecare sarcină. Relațiile sunt accesibile acum datorită `with(['category', 'tags'])` din metoda `index` din `TaskController`.
+
+```php
+<p><strong>Category:</strong> {{ $task->category->name ?? 'None' }}</p>
+@foreach ($task->tags as $tag)
+    <span>{{ $tag->name }}</span>
+@endforeach
+
+```
+
+-   **Datele sunt dinamice, nu statice**:
+    În versiunea veche, sarcinile erau hardcodate ca un array static. Acum, sarcinile sunt preluate din baza de date, iar accesul la date se face prin obiectele returnate de model.
+
+```php
+<a href="{{ route('tasks.show', $task->id) }}">
+    {{ $task->title }}
+</a>
+
+```
+
+-   **Schimbarea modului de iterare**:
+    Iterația inițială folosea $task['title'] pentru a accesa datele din array-uri. Acum, folosim `$task->title`, deoarece datele sunt obiecte Eloquent și nu array-uri.
+
+```php
+@foreach ($tasks as $task)
+    {{ $task->title }}
+@endforeach
+
+```
+
+-   **Verificarea relațiilor goale**:
+    Pentru a preveni erorile în cazul în care o sarcină nu are o categorie asociată, am adăugat o verificare pentru a afișa "None" dacă relația `category` este null.
+
+```php
+{{ $task->category->name ?? 'None' }}
+
+```
+
+Inițial fișierul `show.blade.php` este destinat afișării unei liste de sarcini (similar cu `index.blade.php`), așa că trebuie să-l rescriem pentru afișarea unei singure sarcini. Conform noilor cerințe, trebuie să-l transformăm astfel încât să afișeze detaliile unei sarcini individuale ('$task') și să integreze datele din relațiile `category` și `tags`.
+
+În urma modificărilor:
+
+-   **Schimbarea scopului vizualizării**:
+
+Fișierul inițial afișa o listă de sarcini printr-un loop (`@foreach`). Pentru `show.blade.php`, trebuie să afișăm detaliile unei singure sarcini (`$task`), deoarece metoda `show` din controller transmite un singur obiect în view.
+
+-   **Afișarea atributelor individuale**:
+
+Titlul și descrierea sarcinii: Sunt afișate utilizând proprietățile modelului `$task`.
+
+```php
+<h1 class="text-3xl font-bold text-gray-800 mb-4">{{ $task->title }}</h1>
+<p class="text-gray-600 mb-4">{{ $task->description }}</p>
+```
+
+-   **Categoria sarcinii**:
+    Relația `category` este accesată prin `$task->category->name`, iar dacă sarcina nu are categorie, se afișează `None` folosind operatorul null coalescing (`??`).
+
+```php
+<p><strong>Category:</strong> {{ $task->category->name ?? 'None' }}</p>
+```
+
+-   **Afișarea etichetelor (tags)**:
+
+Etichetele sunt afișate sub formă de "bule" stilizate folosind un loop (`@foreach`) și clase CSS.
+blade
+
+```php
+@foreach ($task->tags as $tag)
+    <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-xs">{{ $tag->name }}</span>
+@endforeach
+```
+
+-   **Datele de creare și actualizare**:
+
+Folosim `created_at` și `updated_at` pentru a afișa datele formatate corespunzător. Metoda `format('d-m-Y H:i')` convertește timestamp-ul într-un format ușor de citit.
+``php
+
+<p><strong>Created at:</strong> {{ $task->created_at->format('d-m-Y H:i') }}</p>
+<p><strong>Last updated:</strong> {{ $task->updated_at->format('d-m-Y H:i') }}</p>
+```
+
+**Conceptele de separare a responsabilităților (Single Responsibility)**
+
+-   Fiecare vizualizare (`index`, `show`, etc.) are un scop clar.
+-   `index.blade.php`: este destinat afișării listei de sarcini.
+-   `show.blade.php`: este destinat afișării unei sarcini individuale.
+    Dacă încercăm să îmbinăm ambele funcționalități (să afișăm și lista de sarcini printr-un `@foreach`, și detaliile unei singure sarcini (`$task`) simultan) într-un singur fișier (`show.blade.php`), încalcăm principiul separării responsabilităților, ceea ce duce la confuzie și cod greu de întreținut.
+
 6. Actualizați metoda create pentru a afișa formularul de creare a unei sarcini și metoda store pentru a salva o sarcină nouă în baza de date.
 
     - **Notă**: Deoarece nu ați studiat încă formularele, folosiți obiectul Request pentru a obține datele. **De exemplu**:
