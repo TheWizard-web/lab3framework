@@ -4,7 +4,7 @@
 
 @section('content')
     <div class="py-12">
-        <!-- <h1 class="text-4xl font-bold text-gray-800 mb-6 text-center">Lista de sarcini</h1> -->
+        <h1 class="text-4xl font-bold text-gray-800 mb-6 text-center">Lista de sarcini</h1>
 
         <ul class="space-y-4 max-w-2xl mx-auto">
             @foreach($tasks as $task)
