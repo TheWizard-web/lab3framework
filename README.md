@@ -455,7 +455,59 @@ public function index()
     - Afișați informațiile despre sarcină după identificatorul acesteia.
     - **Obligatoriu** afișați categoria și etichetele sarcinii.
 
+Codul original al metodei `show`:
+
+```php
+public function show($id)
+{
+    $task = [
+        'id' => $id,
+        'title' => 'Titlul sarcinii',
+        'description' => 'Aceasta este descrierea detaliată a sarcinii.',
+        'created_at' => now()->subDays(2)->format('d-m-Y'),
+        'updated_at' => now()->format('d-m-Y'),
+        'status' => false, // sarcina nu este finalizată
+        'priority' => 'medie',
+        'assigned_to' => 'John Doe'
+    ];
+
+    return view('tasks.show', ['task' => $task]);
+}
+
+```
+
+În acest caz:
+
+-   Sarcina era definită manual ca un array static, folosind `$id` ca identificator.
+-   Detaliile (cum ar fi titlul, descrierea, data creării etc.) erau pur fictive și hardcodate în metoda `show`.
+-   Nu se folosea deloc baza de date, iar datele erau mereu aceleași pentru orice `id`.
+
+După modificare, metoda `show` folosește modelul `Task` pentru a obține datele unei sarcini din baza de date:
+
+```php
+public function show($id)
+{
+    $task = Task::with(['category', 'tags'])->findOrFail($id);
+
+    return view('tasks.show', compact('task'));
+}
+
+```
+
+Acum:
+
+-   **Datele sunt preluate din baza de date**:
+    În loc să folosească un array static, metoda folosește modelul `Task` pentru a găsi sarcina cu ID-ul specificat în baza de date.
+
+-   **Relațiile sunt încărcate**:
+    Folosind `with(['category', 'tags'])`, metoda adaugă și datele din tabelele asociate (`category` și `tags`), ceea ce permite accesarea informațiilor suplimentare despre sarcină.
+
+-   **Gestionează erorile automat**:
+    Metoda `findOrFail($id)` verifică dacă sarcina cu ID-ul specificat există. Dacă nu există, Laravel va arunca automat o eroare 404 (Not Found).
+
 4. În metodele `index` și `show`, folosiți metoda with (**Eager Loading**) pentru a încărca modelele asociate.
+
+La punctele anterioare am folosit`with(['category', 'tags'])` pentru a încărca relațiile. Acesta este un exemplu de Eager Loading care reduce numărul de interogări și aduce datele asociate într-o singură interogare.
 
 5. Actualizați vizualizările corespunzătoare pentru a afișa lista de sarcini și o sarcină individuală.
 
