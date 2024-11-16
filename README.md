@@ -592,8 +592,8 @@ blade
 -   **Datele de creare și actualizare**:
 
 Folosim `created_at` și `updated_at` pentru a afișa datele formatate corespunzător. Metoda `format('d-m-Y H:i')` convertește timestamp-ul într-un format ușor de citit.
-``php
 
+```php
 <p><strong>Created at:</strong> {{ $task->created_at->format('d-m-Y H:i') }}</p>
 <p><strong>Last updated:</strong> {{ $task->updated_at->format('d-m-Y H:i') }}</p>
 ```
