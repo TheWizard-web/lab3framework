@@ -18,14 +18,33 @@ class TaskController extends Controller
     }
 
     public function create()
-    {
-        return 'Afișează formularul pentru crearea unei sarcini';
+{
+    $categories = Category::all(); // Preia toate categoriile
+    $tags = Tag::all(); // Preia toate etichetele
+
+    return view('tasks.create', compact('categories', 'tags')); // Trimite datele către view
+}
+
+
+public function store(Request $request)
+{
+    // Validează datele introduse
+    $validated = $request->validate([
+        'title' => 'required|max:255',
+        'description' => 'required',
+        'category_id' => 'required|exists:categories,id',
+    ]);
+
+    // Creează sarcina
+    $task = Task::create($validated);
+
+    // Atașează etichetele
+    if ($request->has('tags')) {
+        $task->tags()->attach($request->tags);
     }
 
-    public function store(Request $request)
-    {
-        // mai târziu
-    }
+    return redirect()->route('tasks.index')->with('success', 'Sarcina a fost creată cu succes!');
+}
 
     // 2. Metoda show: Obține detaliile unei sarcini individuale
     public function show($id)
@@ -40,16 +59,41 @@ class TaskController extends Controller
 
     public function edit($id)
     {
-        return "Afișează formularul pentru editarea sarcinii cu ID-ul: $id";
+        $task = Task::with('tags')->findOrFail($id); // Găsește sarcina și etichetele asociate
+        $categories = Category::all(); // Preia toate categoriile
+        $tags = Tag::all(); // Preia toate etichetele
+    
+        return view('tasks.edit', compact('task', 'categories', 'tags'));
     }
+    
 
     public function update(Request $request, $id)
-    {
-        // mai târziu
-    }
+{
+    $task = Task::findOrFail($id);
 
-    public function destroy($id)
-    {
-        // mai târziu
-    }
+    // Validează datele introduse
+    $validated = $request->validate([
+        'title' => 'required|max:255',
+        'description' => 'required',
+        'category_id' => 'required|exists:categories,id',
+    ]);
+
+    // Actualizează sarcina
+    $task->update($validated);
+
+    // Actualizează etichetele
+    $task->tags()->sync($request->tags);
+
+    return redirect()->route('tasks.index')->with('success', 'Sarcina a fost actualizată cu succes!');
+}
+
+
+public function destroy($id)
+{
+    $task = Task::findOrFail($id);
+    $task->delete();
+
+    return redirect()->route('tasks.index')->with('success', 'Sarcina a fost ștearsă cu succes!');
+}
+
 }
