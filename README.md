@@ -415,6 +415,41 @@ Urmând acești pași am creat date fictive pentru modelele `Category`, `Task` �
 
     - Folosiți modelul `Task` pentru a obține toate sarcinile.
 
+Inițial, metoda `index` folosea o listă statică de sarcini (un array definit manual) pentru a trimite datele către vizualizare. Codul inițial arăta astfel:
+
+```php
+public function index()
+{
+    $tasks = [
+        ['id' => 1, 'title' => 'Cumpărături'],
+        ['id' => 2, 'title' => 'Spălat mașina'],
+        ['id' => 3, 'title' => 'Finalizat proiect'],
+    ];
+
+    return view('tasks.index', ['tasks' => $tasks]);
+}
+
+```
+
+Aceasta afișa datele din array în vizualizarea `tasks.index`.
+
+După modificare, metoda index arată astfel:
+
+```php
+public function index()
+{
+    $tasks = Task::with(['category', 'tags'])->get();
+
+    return view('tasks.index', compact('tasks'));
+}
+
+```
+
+În aceast mod:
+
+-   Array-ul static a fost înlocuit cu datele obținute din baza de date.
+-   Metoda încearcă să preia toate sarcinile existente din tabelul `tasks` din baza de date (inclusiv relațiile `category` și `tags`).
+
 3. Actualizați metoda `show` pentru a afișa o sarcină individuală.
 
     - Afișați informațiile despre sarcină după identificatorul acesteia.
