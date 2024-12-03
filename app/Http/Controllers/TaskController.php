@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\UpdateTaskRequest;
 use App\Http\Requests\CreateTaskRequest;
 // use Illuminate\Http\Request;
 use App\Models\Task;
@@ -44,7 +45,7 @@ public function store(CreateTaskRequest $request)
          $task->tags()->attach($request->tags);
      }
  
-     return redirect()->route('tasks.index')->with('success', 'Sarcina a fost creată cu succes!');
+      return redirect()->route('tasks.index')->with('success', 'Sarcina a fost creată cu succes!');
 }
 
     // 2. Metoda show: Obține detaliile unei sarcini individuale
@@ -60,33 +61,31 @@ public function store(CreateTaskRequest $request)
 
     public function edit($id)
     {
-        $task = Task::with('tags')->findOrFail($id); // Găsește sarcina și etichetele asociate
-        $categories = Category::all(); // Preia toate categoriile
-        $tags = Tag::all(); // Preia toate etichetele
-    
+        $task = Task::findOrFail($id); 
+        $categories = Category::all(); 
+        $tags = Tag::all(); 
+
         return view('tasks.edit', compact('task', 'categories', 'tags'));
     }
     
 
-    public function update(Request $request, $id)
-{
-    $task = Task::findOrFail($id);
-
-    // Validează datele introduse
-    $validated = $request->validate([
-        'title' => 'required|max:255',
-        'description' => 'required',
-        'category_id' => 'required|exists:categories,id',
-    ]);
-
-    // Actualizează sarcina
-    $task->update($validated);
-
-    // Actualizează etichetele
-    $task->tags()->sync($request->tags);
-
-    return redirect()->route('tasks.index')->with('success', 'Sarcina a fost actualizată cu succes!');
-}
+    public function update(UpdateTaskRequest $request, $id)
+    {
+        $task = Task::findOrFail($id); // Găsește sarcina respectivă
+    
+        // Obține datele validate
+        $validated = $request->validated();
+    
+        // Actualizează sarcina cu noile date
+        $task->update($validated);
+    
+        // Actualizează etichetele asociate
+        if ($request->has('tags')) {
+            $task->tags()->sync($request->tags); // Re-sincronizează etichetele
+        }
+    
+        return redirect()->route('tasks.index')->with('success', 'Sarcina a fost actualizată cu succes!');
+    }
 
 
 public function destroy($id)

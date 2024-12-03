@@ -834,7 +834,7 @@ public function store(Request $request)
     }
 
     return redirect()->route('tasks.index')->with('success', 'Sarcina a fost creată cu succes!');
-}
+ }
 ```
 
 ## №3. Validarea datelor pe partea de server
@@ -1102,3 +1102,90 @@ Afișarea mesajului flash în view :
     ```
 
 ## №7. Actualizarea sarcinii
+
+Adăugați posibilitatea de editare a sarcinii:
+
+    - Creați un formular pentru editarea sarcinii.
+    - Creați o nouă clasă Request `UpdateTaskRequest` cu reguli de validare similare.
+    - Creați ruta `GET /tasks/{task}/edit` și metoda `edit` în controllerul `TaskController`.
+    - Creați ruta `PUT /tasks/{task}` pentru actualizarea sarcinii.
+    - Actualizați metoda `update` în controllerul `TaskController` pentru a procesa datele din formular.
+
+Crearea clasei de cerere :
+`php artisan make:request UpdateTaskRequest`
+
+Componența fișierului:
+
+```php
+ namespace App\Http\Requests;
+
+  use Illuminate\Foundation\Http\FormRequest;
+
+  class UpdateTaskRequest extends FormRequest
+ {
+    /**
+     * Determine if the user is authorized to make this request.
+     */
+    public function authorize(): bool
+    {
+        return true;
+    }
+
+    /**
+     * Get the validation rules that apply to the request.
+     *
+     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
+     */
+    public function rules(): array
+    {
+        return [
+           'title' => 'required|string|min:3',
+            'description' => 'nullable|string|max:500',
+            'category_id' => 'required|exists:categories,id',
+        ];
+    }
+  }
+```
+
+Creare rută `GET /tasks/{task}/edit` în `routes/web.php` `și metoda `edit`în`TaskController`:
+
+1. `Route::get('/tasks/{task}/edit', [TaskController::class, 'edit'])->name('tasks.edit');`
+
+2.
+
+```php
+   public function edit($id)
+   {
+       $task = Task::findOrFail($id);
+       $categories = Category::all();
+       $tags = Tag::all();
+
+       return view('tasks.edit', compact('task', 'categories', 'tags'));
+   }
+```
+
+Ruta `PUT /tasks/{task}` pentru actualizarea sarcinii :
+
+`Route::put('/tasks/{task}', [TaskController::class, 'update'])->name('tasks.update');`
+
+Actualizare metoda `update` în `TaskController` :
+
+```php
+ use App\Http\Requests\UpdateTaskRequest;
+
+ public function update(UpdateTaskRequest $request, $id)
+    {
+        $task = Task::findOrFail($id);
+
+        $validated = $request->validated();
+
+        $task->update($validated);
+
+        if ($request->has('tags')) {
+            $task->tags()->sync($request->tags);
+        }
+
+        return redirect()->route('tasks.index')->with('success', 'Sarcina a fost actualizată cu
+         succes!');
+    }
+```

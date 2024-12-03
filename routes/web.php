@@ -29,3 +29,6 @@ Route::resource('tasks', TaskController::class)->where(['task' => '[0-9]+']);
 // Rute pentru sarcini
 Route::resource('tasks', TaskController::class);
 
+Route::get('/tasks/{task}/edit', [TaskController::class, 'edit'])->name('tasks.edit');
+
+Route::put('/tasks/{task}', [TaskController::class, 'update'])->name('tasks.update');
