@@ -605,7 +605,7 @@ Folosim `created_at` și `updated_at` pentru a afișa datele formatate corespunz
 -   `show.blade.php`: este destinat afișării unei sarcini individuale.
     Dacă încercăm să îmbinăm ambele funcționalități (să afișăm și lista de sarcini printr-un `@foreach`, și detaliile unei singure sarcini (`$task`) simultan) într-un singur fișier (`show.blade.php`), încalcăm principiul separării responsabilităților, ceea ce duce la confuzie și cod greu de întreținut.
 
-6. Actualizați metoda create pentru a afișa formularul de creare a unei sarcini și metoda store pentru a salva o sarcină nouă în baza de date.
+6. Actualizați metoda `create` pentru a afișa formularul de creare a unei sarcini și metoda store pentru a salva o sarcină nouă în baza de date.
 
     - **Notă**: Deoarece nu ați studiat încă formularele, folosiți obiectul Request pentru a obține datele. **De exemplu**:
 
@@ -664,3 +664,21 @@ DB::transaction(function () use ($request) {
 5. Ce sunt tranzacțiile și de ce sunt importante în lucrul cu bazele de date?
 
     - Tranzacțiile sunt un set de operațiuni care sunt executate împreună. Dacă oricare dintre aceste operațiuni eșuează, toate sunt anulate, pentru a păstra integritatea bazei de date. Sunt importante pentru a asigura că datele rămân consistente și corecte, chiar și în caz de erori sau probleme.
+
+# Lucrarea de laborator nr. 4. Formularea și validarea datelor
+
+## Scopul lucrării
+
+Familiarizarea cu elementele de bază ale creării și gestionării formularelor în `Laravel`.
+
+Deprinderea mecanismelor de validare a datelor pe server, utilizarea regulilor de validare predefinite și personalizate, precum și învățarea gestionării erorilor și asigurarea securității datelor.
+
+## Condiții
+
+În această lucrare de laborator, veți crea formulare HTML, implementați verificarea datelor pe partea de server și asigurați interacțiunea sigură cu utilizatorul, prevenind vulnerabilități precum `XSS` și `CSRF`.
+
+## №1. Pregătirea lucrării
+
+Am să continui cu proiectul anterior Laravel (todo-app).
+
+## №2. Crearea formularului

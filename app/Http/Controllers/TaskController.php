@@ -7,17 +7,19 @@ use App\Models\Task;
 use App\Models\Category;
 use App\Models\Tag;
 
+
 class TaskController extends Controller
 {
     // 1. Metoda index: Obține lista de sarcini cu relațiile lor asociate
     public function index()
     {
-          // Folosește Eager Loading pentru a include 'category' și 'tags'
-          $tasks = Task::with(['category', 'tags'])->get();
+        // Folosește Eager Loading pentru a include 'category' și 'tags' și sortează după cele mai noi
+        $tasks = Task::with(['category', 'tags'])->orderBy('created_at', 'desc')->get();
         
-          // Returnează vizualizarea 'tasks.index' cu datele sarcinilor
-          return view('tasks.index', compact('tasks'));
+        // Returnează vizualizarea 'tasks.index' cu datele sarcinilor
+        return view('tasks.index', compact('tasks'));
     }
+    
 
     public function create()
 {

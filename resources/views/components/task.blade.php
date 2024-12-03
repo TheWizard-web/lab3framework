@@ -10,7 +10,7 @@
 ])
 
 <div class="task p-6 bg-white border border-gray-200 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300 mb-6">
-    <h2 class="text-2xl font-bold text-gray-800 mb-2">{{ $title }}</h2>
+    <h2 class="text-4xl font-bold text-gray-800 mb-2">{{ $title }}</h2>
     <p class="text-gray-700 mb-4">{{ $description }}</p>
 
     <div class="text-sm text-gray-500 space-y-1 mb-4">

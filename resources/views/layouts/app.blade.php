@@ -17,12 +17,12 @@
     </nav>
 
     <!-- Antet -->
-    <x-header class="text-center bg-gradient-to-r from-blue-500 to-teal-500 text-white py-8 text-4xl font-bold shadow-md">
+    <!-- <x-header class="text-center bg-gradient-to-r from-blue-500 to-teal-500 text-white py-8 text-4xl font-bold shadow-md">
         @yield('title')
-    </x-header>
+    </x-header> -->
 
     <!-- Conținutul paginii -->
-    <div class="content max-w-4xl mx-auto p-8 bg-white shadow-lg rounded-lg mt-8 flex-grow">
+    <div class="content w-8xl mx-auto p-8 bg-white shadow-lg rounded-lg mt-8 flex-grow">
         @yield('content')
     </div>
 

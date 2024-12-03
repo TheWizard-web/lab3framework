@@ -11,6 +11,7 @@
             <ul class="flex space-x-4">
                 <li><a href="{{ route('tasks.index') }}" class="text-blue-500 hover:underline">Lista de sarcini</a></li>
                 <li><a href="{{ route('tasks.create') }}" class="text-blue-500 hover:underline">Crearea unei sarcini</a></li>
+                
             </ul>
         </nav>
 
