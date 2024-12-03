@@ -840,5 +840,258 @@ public function store(Request $request)
     - due_date — obligatoriu, dată, trebuie să fie cel puțin data de astăzi.
     - category_id — obligatoriu, trebuie să existe în tabelul categories.
 
+```php
+public function store(Request $request)
+{
+    // Validează datele introduse
+    $validated = $request->validate([
+        'title' => 'required|string|min:3',
+        'description' => 'nullable|string|max:500',
+        'deadline' => 'required|date|after_or_equal:today',
+        'category_id' => 'required|exists:categories,id',
+    ]);
+
+    // Creează sarcina
+    $task = Task::create($validated);
+
+    // Atașează etichetele
+    if ($request->has('tags')) {
+        $task->tags()->attach($request->tags);
+    }
+
+    return redirect()->route('tasks.index')->with('success', 'Sarcina a fost creată cu succes!');
+}
+
+```
+
 3. Gestionați erorile de validare și returnați-le la formular, afișând mesajele de eroare lângă câmpuri.
 4. Verificați funcționarea corectă a validării și asigurați-vă că erorile sunt afișate corect.
+
+```php
+@extends('layouts.app')
+
+@section('title', 'Creare Sarcină')
+
+@section('content')
+    <div class="max-w-4xl mx-auto p-6 bg-white shadow-lg rounded-lg">
+        <h1 class="text-2xl font-bold text-gray-800 mb-6">Crează o sarcină nouă</h1>
+
+        <form action="{{ route('tasks.store') }}" method="POST" class="space-y-6">
+            @csrf
+
+            {{-- Titlu --}}
+            <div>
+                <label for="title" class="block text-sm font-medium text-gray-700 mb-1">Titlu</label>
+                <input
+                    type="text"
+                    name="title"
+                    id="title"
+                    required
+                    class="w-full border border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 p-2"
+                >
+                @error('title')
+                    <div class="text-danger">{{ $message }}</div>
+                @enderror
+            </div>
+
+            {{-- Descriere --}}
+            <div>
+                <label for="description" class="block text-sm font-medium text-gray-700 mb-1">Descriere</label>
+                <textarea
+                    name="description"
+                    id="description"
+                    required
+                    class="w-full border border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 p-2"
+                    rows="4"
+                ></textarea>
+                @error('description')
+                    <div class="text-danger">{{ $message }}</div>
+                @enderror
+            </div>
+
+            {{-- Data Limita --}}
+                <div class="mb-3">
+                <label for="deadline" class="form-label">Data limită</label>
+                <input type="date" name="deadline" id="deadline" class="form-control" required>
+                @error('deadline')
+                    <div class="text-danger">{{ $message }}</div>
+                @enderror
+            </div>
+
+            {{-- Categorie --}}
+            <div>
+                <label for="category_id" class="block text-sm font-medium text-gray-700 mb-1">Categorie</label>
+                <select
+                    name="category_id"
+                    id="category_id"
+                    required
+                    class="w-full border border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 p-2"
+                >
+                    <option value="">-- Selectează o categorie --</option>
+                    @foreach ($categories as $category)
+                        <option value="{{ $category->id }}">{{ $category->name }}</option>
+                    @endforeach
+                </select>
+                @error('category_id')
+                    <div class="text-danger">{{ $message }}</div>
+                @enderror
+            </div>
+
+            {{-- Etichete --}}
+            <div>
+                <label for="tags" class="block text-sm font-medium text-gray-700 mb-1">Etichete</label>
+                <select
+                    name="tags[]"
+                    id="tags"
+                    multiple
+                    class="w-full border border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 p-2"
+                >
+                    @foreach ($tags as $tag)
+                        <option value="{{ $tag->id }}">{{ $tag->name }}</option>
+                    @endforeach
+                </select>
+                <p class="text-sm text-gray-500 mt-1">Poți selecta mai multe etichete folosind Ctrl (sau Cmd pe Mac).</p>
+            </div>
+
+            {{-- Submit --}}
+            <div>
+                <button
+                    type="submit"
+                    class="w-full bg-blue-600 text-white font-bold py-2 px-4 rounded-lg shadow hover:bg-blue-700 focus:ring-4 focus:ring-blue-500"
+                >
+                    Crează Sarcina
+                </button>
+            </div>
+        </form>
+    </div>
+@endsection
+
+```
+
+## №4. Crearea unei clase de cerere personalizată (Request)
+
+1. În a doua etapă, creați o clasă personalizată de cerere pentru validarea formularului sarcinii:
+
+    - Folosiți comanda php artisan make:request CreateTaskRequest
+    - În clasa CreateTaskRequest, definiți regulile de validare similare celor din controller.
+    - Actualizați metoda store a controllerului TaskController pentru a folosi CreateTaskRequest în loc de Request.
+
+2. Adăugați logica de validare pentru datele asociate
+
+    - Verificați că valoarea category_id există efectiv în baza de date și aparține unei categorii specificate.
+
+3. Asigurați-vă că datele trec prin validarea TaskRequest și că toate erorile sunt gestionate corect și returnate la formular.
+
+Crearea unui fișier nou în directorul `app/Http/Requests/` cu numele `CreateTaskRequest.php` prin comanda : `php artisan make:request CreateTaskReques`.
+Definirea regulilor de validare similare celor din controller in metoda `rules()`.
+
+```php
+<?php
+
+namespace App\Http\Requests;
+
+use Illuminate\Foundation\Http\FormRequest;
+
+class CreateTaskRequest extends FormRequest
+{
+    /**
+     * Determine if the user is authorized to make this request.
+     */
+    public function authorize(): bool
+    {
+        return false;
+        // true - daca toti utilizatorii sunt autorizati
+    }
+
+    /**
+     * Get the validation rules that apply to the request.
+     *
+     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
+     */
+    public function rules(): array
+    {
+        return [
+            'title' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'deadline' => 'nullable|date',
+            'category_id' => 'required|exists:categories,id',
+            'tags' => 'nullable|array',
+            'tags.*' => 'exists:tags,id',
+        ];
+    }
+
+    public function messages(): array
+    {
+        return [
+            'title.required' => 'Titlul este obligatoriu.',
+            'title.max' => 'Titlul nu poate avea mai mult de 255 de caractere.',
+            'category_id.required' => 'Categoria este obligatorie.',
+            'category_id.exists' => 'Categoria selectată nu există.',
+            'tags.*.exists' => 'Eticheta selectată nu este validă.',
+        ];
+    }
+}
+
+
+```
+
+Actualizare metoda `store` din `TaskController`.
+
+```php
+use App\Http\Requests\CreateTaskRequest;
+
+public function store(CreateTaskRequest $request)
+{
+     // Preia datele validate direct din CreateTaskRequest
+     $validated = $request->validated();
+
+     // Creează sarcina în baza de date
+     $task = Task::create($validated);
+
+     // Atașează etichetele, in caz că există
+     if ($request->has('tags')) {
+         $task->tags()->attach($request->tags);
+     }
+
+     return redirect()->route('tasks.index')->with('success', 'Sarcina a fost creată cu succes!');
+}
+
+```
+
+## №5. Adăugarea mesajelor flash
+
+1. Actualizați formularul HTML pentru a afișa un mesaj de confirmare la salvarea cu succes a sarcinii (mesaj flash).
+2. Actualizați metoda `store` a controllerului `TaskController` pentru a adăuga un mesaj flash la salvarea cu succes a sarcinii.
+
+În metoda `store()` :
+
+`return redirect()->route('tasks.index')->with('success', 'Sarcina a fost creată cu succes!');`
+
+Afișarea mesajului flash în view :
+
+```php
+{{-- Afișare mesaje flash --}}
+        @if (session('success'))
+            <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-6 text-center">
+                {{ session('success') }}
+            </div>
+        @endif
+```
+
+![Afișare mesaje flash](image-3.png)
+
+## №6. Protecția împotriva CSRF
+
+1. Asigurarea securității datelor din formulare:
+
+    - Adăugați directiva @csrf în formular pentru protecția împotriva atacurilor **CSRF**.
+    - Asigurați-vă că formularul este trimis doar prin metoda **POST**.
+
+    Laravel are protecție împotriva atacurilor CSRF (Cross-Site Request Forgery) integrată, iar aceasta este activată implicit pentru toate rutele care folosesc metodele `POST`, `PUT`, `PATCH` și `DELETE`.
+
+    ```php
+    <form action="{{ route('tasks.store') }}" method="POST" class="space-y-6">
+            @csrf
+    ```
+
+## №7. Actualizarea sarcinii

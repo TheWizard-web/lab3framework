@@ -2,7 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Http\Requests\CreateTaskRequest;
+// use Illuminate\Http\Request;
 use App\Models\Task;
 use App\Models\Category;
 use App\Models\Tag;
@@ -30,25 +31,20 @@ class TaskController extends Controller
 }
 
 
-public function store(Request $request)
+public function store(CreateTaskRequest $request)
 {
-    // Validează datele introduse
-    $validated = $request->validate([
-        'title' => 'required|max:255',
-        'description' => 'required',
-        'deadline' => 'required|date',
-        'category_id' => 'required|exists:categories,id',
-    ]);
+     // Preia datele validate direct din CreateTaskRequest
+     $validated = $request->validated();
 
-    // Creează sarcina
-    $task = Task::create($validated);
-
-    // Atașează etichetele
-    if ($request->has('tags')) {
-        $task->tags()->attach($request->tags);
-    }
-
-    return redirect()->route('tasks.index')->with('success', 'Sarcina a fost creată cu succes!');
+     // Creează sarcina în baza de date
+     $task = Task::create($validated);
+ 
+     // Atașează etichetele, dacă există
+     if ($request->has('tags')) {
+         $task->tags()->attach($request->tags);
+     }
+ 
+     return redirect()->route('tasks.index')->with('success', 'Sarcina a fost creată cu succes!');
 }
 
     // 2. Metoda show: Obține detaliile unei sarcini individuale

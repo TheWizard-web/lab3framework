@@ -28,3 +28,4 @@ Route::resource('tasks', TaskController::class)->where(['task' => '[0-9]+']);
 
 // Rute pentru sarcini
 Route::resource('tasks', TaskController::class);
+

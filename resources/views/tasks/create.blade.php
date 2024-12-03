@@ -19,6 +19,9 @@
                     required 
                     class="w-full border border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 p-2"
                 >
+                @error('title')
+                    <div class="text-danger">{{ $message }}</div>
+                @enderror
             </div>
 
             {{-- Descriere --}}
@@ -31,13 +34,19 @@
                     class="w-full border border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 p-2"
                     rows="4"
                 ></textarea>
+                @error('description')
+                    <div class="text-danger">{{ $message }}</div>
+                @enderror
             </div>
 
-            {{-- Data Limita --}}
+            <!-- {{-- Data Limita --}}
                 <div class="mb-3">
                 <label for="deadline" class="form-label">Data limită</label>
                 <input type="date" name="deadline" id="deadline" class="form-control" required>
-            </div>
+                @error('deadline')
+                    <div class="text-danger">{{ $message }}</div>
+                @enderror
+            </div> -->
 
             {{-- Categorie --}}
             <div>
@@ -53,6 +62,9 @@
                         <option value="{{ $category->id }}">{{ $category->name }}</option>
                     @endforeach
                 </select>
+                @error('category_id')
+                    <div class="text-danger">{{ $message }}</div>
+                @enderror
             </div>
 
             {{-- Etichete --}}

@@ -6,6 +6,13 @@
     <div class="py-12">
         <h1 class="text-4xl font-bold text-gray-800 mb-6 text-center">Lista de sarcini</h1>
 
+        {{-- Afișare mesaje flash --}}
+        @if (session('success'))
+            <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-6 text-center">
+                {{ session('success') }}
+            </div>
+        @endif
+
         <ul class="space-y-4 max-w-2xl mx-auto">
             @foreach($tasks as $task)
                 <li class="bg-white shadow-lg p-4 rounded-lg hover:bg-blue-50 transition duration-200">
