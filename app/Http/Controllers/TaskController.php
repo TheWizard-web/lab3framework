@@ -36,6 +36,7 @@ public function store(Request $request)
     $validated = $request->validate([
         'title' => 'required|max:255',
         'description' => 'required',
+        'deadline' => 'required|date',
         'category_id' => 'required|exists:categories,id',
     ]);
 

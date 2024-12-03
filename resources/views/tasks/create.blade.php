@@ -33,6 +33,12 @@
                 ></textarea>
             </div>
 
+            {{-- Data Limita --}}
+                <div class="mb-3">
+                <label for="deadline" class="form-label">Data limită</label>
+                <input type="date" name="deadline" id="deadline" class="form-control" required>
+            </div>
+
             {{-- Categorie --}}
             <div>
                 <label for="category_id" class="block text-sm font-medium text-gray-700 mb-1">Categorie</label>
