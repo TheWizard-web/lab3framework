@@ -682,3 +682,16 @@ Deprinderea mecanismelor de validare a datelor pe server, utilizarea regulilor d
 Am să continui cu proiectul anterior Laravel (todo-app).
 
 ## №2. Crearea formularului
+
+1. Creați un formular pentru adăugarea unei sarcini noi:
+
+    -   1. Formularul trebuie să conțină următoarele câmpuri: `Titlu`, `Descriere`, `Data limită`, `Categorie`.
+    -   2. Folosiți șabloanele Blade pentru a reda formularul.
+    -   3. Câmpul `Categorie` trebuie să fie o listă derulantă, încărcată din tabelul de categorii din baza de date.
+    -   4. Asigurați-vă că formularul trimite date prin metoda **POST** către o rută creată pentru procesarea datelor.
+
+2. Creați ruta `POST /tasks` pentru salvarea datelor din formular în baza de date. Pentru ușurință, puteți folosi un controller de tip resursă.
+3. Actualizați controllerul `TaskController` :
+
+    -   1. Adăugați metoda create, care returnează vizualizarea cu formularul.
+    -   2. Adăugați metoda `store`, care procesează datele din formular și le salvează.
