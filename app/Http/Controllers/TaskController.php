@@ -71,17 +71,14 @@ public function store(CreateTaskRequest $request)
 
     public function update(UpdateTaskRequest $request, $id)
     {
-        $task = Task::findOrFail($id); // Găsește sarcina respectivă
-    
-        // Obține datele validate
+        $task = Task::findOrFail($id); 
+        
         $validated = $request->validated();
-    
-        // Actualizează sarcina cu noile date
+  
         $task->update($validated);
     
-        // Actualizează etichetele asociate
         if ($request->has('tags')) {
-            $task->tags()->sync($request->tags); // Re-sincronizează etichetele
+            $task->tags()->sync($request->tags); 
         }
     
         return redirect()->route('tasks.index')->with('success', 'Sarcina a fost actualizată cu succes!');

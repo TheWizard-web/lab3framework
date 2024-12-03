@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use App\Rules\NoRestrictedWords;
 
 class CreateTaskRequest extends FormRequest
 {
@@ -24,7 +25,7 @@ class CreateTaskRequest extends FormRequest
     {
         return [
             'title' => 'required|string|max:255',
-            'description' => 'nullable|string',
+            'description' => ['nullable', 'string', new NoRestrictedWords],
             // 'deadline' => 'nullable|date',
             'category_id' => 'required|exists:categories,id',
             'tags' => 'nullable|array',
@@ -40,6 +41,7 @@ class CreateTaskRequest extends FormRequest
             'category_id.required' => 'Categoria este obligatorie.',
             'category_id.exists' => 'Categoria selectată nu există.',
             'tags.*.exists' => 'Eticheta selectată nu este validă.',
+            'description.no_restricted_words' => 'Descrierea conține cuvinte interzise.',
         ];
     }
 }

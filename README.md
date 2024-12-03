@@ -1189,3 +1189,209 @@ Actualizare metoda `update` în `TaskController` :
          succes!');
     }
 ```
+
+Fișierul `edit.blade.php` :
+
+```php
+ @extends('layouts.app')
+
+ @section('title', 'Editare Sarcină')
+
+ @section('content')
+ <div class="container mx-auto max-w-screen-lg p-6"> <!-- Updated width -->        <h1 class="text-4xl
+ font-bold text-gray-800 mb-8">Editare Sarcină</h1>
+
+        <form action="{{ route('tasks.update', $task->id) }}" method="POST" class="bg-white p-8
+         rounded-lg shadow-lg">
+            @csrf
+            @method('PUT')
+
+            {{-- Titlu --}}
+            <div class="mb-6">
+                <label for="title" class="block text-lg font-medium text-gray-700">Titlu</label>
+                <input type="text" name="title" id="title" value="{{ $task->title }}" required
+                    class="mt-2 w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none
+                     focus:ring-2 focus:ring-indigo-500 transition duration-200">
+            </div>
+
+            {{-- Descriere --}}
+            <div class="mb-6">
+                <label for="description" class="block text-lg font-medium text-gray-
+                 700">Descriere</label>
+                <textarea name="description" id="description" required
+                    class="mt-2 w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none
+                     focus:ring-2 focus:ring-indigo-500 transition duration-200">{{ $task->description
+                      }}</textarea>
+            </div>
+
+            {{-- Categorie --}}
+            <div class="mb-6">
+                <label for="category_id" class="block text-lg font-medium text-gray-
+                 700">Categorie</label>
+                <select name="category_id" id="category_id" required
+                    class="mt-2 w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none
+                     focus:ring-2 focus:ring-indigo-500 transition duration-200">
+                    @foreach ($categories as $category)
+                        <option value="{{ $category->id }}" {{ $task->category_id == $category->id ?
+                         'selected' : '' }}>
+                            {{ $category->name }}
+                        </option>
+                    @endforeach
+                </select>
+            </div>
+
+            {{-- Etichete --}}
+            <div class="mb-6">
+                <label for="tags" class="block text-lg font-medium text-gray-700">Etichete</label>
+                <select name="tags[]" id="tags" multiple
+                    class="mt-2 w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none
+                     focus:ring-2 focus:ring-indigo-500 transition duration-200">
+                    @foreach ($tags as $tag)
+                        <option value="{{ $tag->id }}" {{ in_array($tag->id, $task->tags->pluck('id')-
+                         >toArray()) ? 'selected' : '' }}>
+                            {{ $tag->name }}
+                        </option>
+                    @endforeach
+                </select>
+            </div>
+
+            {{-- Submit --}}
+            <div class="mb-4">
+                <button type="submit"
+                    class="w-full py-3 px-4 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-
+                     indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition
+                      duration-200">
+                    Actualizează Sarcina
+                </button>
+            </div>
+        </form>
+    </div>
+ @endsection
+
+```
+
+## Sarcină suplimentară
+
+1. Creați o regulă personalizată de validare pentru a verifica că description nu conține cuvinte interzise.
+2. Folosiți comanda Artisan: `php artisan make:rule NoRestrictedWords`.
+3. Aplicați această regulă câmpului `description` în clasa `CreateTaskRequest`.
+
+Creare regula personalizată de validare prin comanda : `php artisan make:rule NoRestrictedWords`.
+Definire regulii personalizate în fișierul `NoRestrictedWords.php`:
+
+```php
+    <?php
+
+ namespace App\Rules;
+
+ use Closure;
+ use Illuminate\Contracts\Validation\ValidationRule;
+
+ class NoRestrictedWords implements ValidationRule
+ {
+    /**
+     * Lista cuvintelor interzise.
+     *
+     * @var array
+     */
+    protected $restrictedWords = ['lorem', 'voluptate', 'velit'];
+
+    /**
+     * Validează valoarea câmpului.
+     *
+     * @param  string  $attribute
+     * @param  mixed  $value
+     * @param  \Closure(string): \Illuminate\Translation\PotentiallyTranslatedString  $fail
+     */
+    public function validate(string $attribute, mixed $value, Closure $fail): void
+    {
+        // Parcurge lista de cuvinte interzise și verifică dacă există
+        foreach ($this->restrictedWords as $word) {
+            if (stripos($value, $word) !== false) {
+                // Dacă se găsește un cuvânt interzis, returnează eroarea
+                $fail("Câmpul $attribute conține cuvinte interzise: $word.");
+            }
+        }
+    }
+ }
+
+```
+
+Aplicarea regulii în `CreateTaskRequest`:
+
+```php
+
+ namespace App\Http\Requests;
+
+ use Illuminate\Foundation\Http\FormRequest;
+ use App\Rules\NoRestrictedWords;
+
+ class CreateTaskRequest extends FormRequest
+ {
+    /**
+     * Determine if the user is authorized to make this request.
+     */
+    public function authorize(): bool
+    {
+        return true;
+        // true - daca toti utilizatorii sunt autorizati
+    }
+
+    /**
+     * Get the validation rules that apply to the request.
+     *
+     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
+     */
+    public function rules(): array
+    {
+        return [
+            'title' => 'required|string|max:255',
+            'description' => ['nullable', 'string', new NoRestrictedWords],
+            // 'deadline' => 'nullable|date',
+            'category_id' => 'required|exists:categories,id',
+            'tags' => 'nullable|array',
+            'tags.*' => 'exists:tags,id',
+        ];
+    }
+
+    public function messages(): array
+    {
+        return [
+            'title.required' => 'Titlul este obligatoriu.',
+            'title.max' => 'Titlul nu poate avea mai mult de 255 de caractere.',
+            'category_id.required' => 'Categoria este obligatorie.',
+            'category_id.exists' => 'Categoria selectată nu există.',
+            'tags.*.exists' => 'Eticheta selectată nu este validă.',
+            'description.no_restricted_words' => 'Descrierea conține cuvinte interzise.',
+        ];
+    }
+}
+
+```
+
+![bad_words](image-4.png)
+
+## Întrebări de control
+
+1. Ce este validarea datelor și de ce este necesară?
+
+    - Este procesul de verificare a integrității informațiilor primite intr-un formular sau o cerere.  
+      Este necesară pentru a preveni erorile, a proteja aplicația de atacuri rau intentionate și pentru
+      a asigura că datele procesate respectă cerințele sistemului.
+
+2. Cum se asigură protecția formularului împotriva atacurilor CSRF în Laravel?
+
+    - Protecția formularului împotriva atacurilor CSRF este asigurată automat prin includerea unui  
+      token CSRF în formulare utilizând directiva `@csrf`. Laravel validează acest token la procesarea
+      cererilor **POST**.
+
+3. Cum se creează și utilizează clasele personalizate de cerere (Request) în Laravel?
+
+    - Ele sunt create cu comanda: `php artisan make:request NumeRequest`. Acestea sunt utilizate pentru
+      validarea datelor și autorizarea accesului în metodele controller-ului, înlocuind regulile de  
+       validare directe din controller.
+
+4. Cum se protejează datele împotriva atacurilor XSS la afișarea în vizualizare?
+    - Utilizând sintaxa `{{ $data }}` în Blade, care "curăță" automat caracterele HTML periculoase, prevenind injectarea de cod malițios.
+
+# Lucrarea de laborator nr. 5. Componentele de securitate în Laravel
