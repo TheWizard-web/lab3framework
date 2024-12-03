@@ -685,7 +685,8 @@ Am să continui cu proiectul anterior Laravel (todo-app).
 
 1. Creați un formular pentru adăugarea unei sarcini noi:
 
-    -   1. Formularul trebuie să conțină următoarele câmpuri: `Titlu`, `Descriere`, `Data limită`, `Categorie`.
+    1. Formularul trebuie să conțină următoarele câmpuri: `Titlu`, `Descriere`, `Data limită`, `Categorie`.
+
     -   2. Folosiți șabloanele Blade pentru a reda formularul.
     -   3. Câmpul `Categorie` trebuie să fie o listă derulantă, încărcată din tabelul de categorii din baza de date.
     -   4. Asigurați-vă că formularul trimite date prin metoda **POST** către o rută creată pentru procesarea datelor.
