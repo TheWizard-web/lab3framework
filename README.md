@@ -1584,6 +1584,26 @@ public function storeRegister(RegisterRequest $request)
 2. Urmați instrucțiunile de instalare și configurare a pachetului.
 3. Verificați dacă rutele `/register`, `/login`, `/logout` funcționează corect.
 
+După instalarea Laravel Breeze continutul fișierului `web.php` a devenit acesta :
+
+```php
+Route::get('/', function () {
+    return view('welcome');
+});
+
+Route::get('/dashboard', function () {
+    return view('dashboard');
+})->middleware(['auth', 'verified'])->name('dashboard');
+
+Route::middleware('auth')->group(function () {
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+});
+
+require __DIR__.'/auth.php';
+```
+
 ## №4. Autentificarea utilizatorilor
 
 1. Implementați o pagină „Panou personal”, accesibilă doar utilizatorilor autentificați.
@@ -1591,6 +1611,73 @@ public function storeRegister(RegisterRequest $request)
    implementând verificarea în controller.
 3. Actualizați vizualizarea paginii „Panou personal” pentru a afișa informațiile disponibile exclusiv
    utilizatorilor autentificați.
+
+Adăugare rută pentru panoul personal :
+
+```php
+    use App\Http\Controllers\DashboardController;
+
+    Route::middleware(['auth'])->group(function () {
+        Route::get('/dashboard',[DashboardController::class, 'index'])->name('dashboard');
+    });
+
+```
+
+Crearea controller-ul `DashboardController` :
+
+`php artisan make:controller DashboardController`
+
+Metoda `index` din controller-ul recent creat pentru a returna viualizarea `Panou Personal`:
+
+```php
+    <?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+
+class DashboardController extends Controller
+{
+    public function index()
+    {
+        // Returnează pagina „Panou personal”
+        return view('dashboard');
+    }
+}
+
+```
+
+Vizualizarea pentru pagina „Panou personal” :
+
+```php
+    <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panou Personal</title>
+    <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+</head>
+<body>
+    <div class="container mx-auto p-6">
+        <h1 class="text-2xl font-bold">Bine ai venit în Panoul Personal!</h1>
+        <p class="mt-4">Ești autentificat ca: <strong>{{ auth()->user()->name }}</strong></p>
+        <p>Email: {{ auth()->user()->email }}</p>
+
+        <a href="{{ route('logout') }}"
+           onclick="event.preventDefault(); document.getElementById('logout-form').submit();"
+           class="text-blue-500 hover:underline">
+            Deconectează-te
+        </a>
+
+        <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+            @csrf
+        </form>
+    </div>
+</body>
+</html>
+
+```
 
 ## №5. Rolurile utilizatorilor
 
