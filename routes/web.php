@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
 
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -35,6 +36,14 @@ require __DIR__.'/auth.php';
 Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 });
+
+Route::middleware(['auth', 'role:admin'])->group(function ()    {
+    Route::get('/admin-dashboard', [DashboardController::class, 'admin'])->name('admin.dashboard');
+    });
+
+    Route::middleware(['auth', 'role:user'])->group(function () {
+    Route::get('/user-dashboard', [DashboardController::class, 'user'])->name('user.dashboard');
+    });
 
 // Route::get('/register', [AuthController::class, 'register'])->name('register');
 // Route::post('/register', [AuthController::class, 'storeRegister']);

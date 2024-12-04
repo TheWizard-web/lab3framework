@@ -1737,11 +1737,73 @@ UPDATE users SET role = 'user' WHERE email = 'user@example.com';
 
 ```
 
+Am creat un Middleware pentru roluri:
+`php artisan make:middleware RoleMiddleware`
+
+În `app/Http/Middleware/RoleMiddleware.php` :
+
+```php
+    public function handle($request, Closure $next, $role)
+{
+    if (auth()->check() && auth()->user()->role === $role) {
+        return $next($request);
+    }
+
+    abort(403, 'Access denied');
+}
+
+```
+
+În `app/Http/Kernel.php`, înregistrez middleware-ul :
+
+```php
+    protected $routeMiddleware = [
+    // Alte middleware-uri...
+    'role' => \App\Http\Middleware\RoleMiddleware::class,
+    ];
+
+```
+
+Aplicare middleware pe rute în `web.php` :
+
+```php
+
+    Route::middleware(['auth', 'role:admin'])->group(function ()    {
+    Route::get('/admin-dashboard', [DashboardController::class, 'admin'])->name('admin.dashboard');
+    });
+
+    Route::middleware(['auth', 'role:user'])->group(function () {
+    Route::get('/user-dashboard', [DashboardController::class, 'user'])->name('user.dashboard');
+    });
+
+```
+
+Am adăugat 2 vizualizări simple `admin.blade.php` și `user.blade.php`.
+
 ## №6. Deconectarea și protecția împotriva CSRF
 
 1. Adăugați un buton pentru deconectarea utilizatorului pe pagină.
 2. Asigurați protecția împotriva atacurilor CSRF pe formulare.
 3. Verificați că deconectarea utilizatorului funcționează corect și sigur.
+
+În navigation.blade.php era deja prezent un buton de deconectare si era si definita ruta in `web.php`
+
+`Route::post('/logout', [AuthController::class, 'logout'])->name('logout');`
+
+Și in `AuthController.php ` era prezent codul :
+
+```php
+    public function logout(Request $request)
+    {
+        Auth::logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        return redirect('/')->with('success', 'Te-ai deconectat cu succes!');
+    }
+```
+
+Și protecția CSRF în formularul de deconectare, token-ul CSRF este deja inclus cu `@csrf`, ceea ce asigură protecția împotriva atacurilor CSRF.
 
 ## Întrebări de control
 
