@@ -1689,6 +1689,54 @@ Vizualizarea pentru pagina „Panou personal” :
 
 3. Implementați verificările rolurilor folosind metoda can, Gate sau middleware, pentru a asigura distribuirea corectă a drepturilor de acces.
 
+Am adaugat coloana `role` in tabela users din BD :
+
+`php artisan make:migration add_role_to_users_table --table=users`
+
+Am adăugat câmpul de migrare :
+
+```php
+ <?php
+
+ use Illuminate\Database\Migrations\Migration;
+ use Illuminate\Database\Schema\Blueprint;
+ use Illuminate\Support\Facades\Schema;
+
+ return new class extends Migration
+ {
+    /**
+     * Run the migrations.
+     */
+    public function up()
+ {
+    Schema::table('users', function (Blueprint $table) {
+        $table->string('role')->default('user'); // Valoarea
+         implicită este 'user'
+    });
+ }
+
+ public function down()
+  {
+    Schema::table('users', function (Blueprint $table) {
+        $table->dropColumn('role');
+    });
+ }
+
+
+ };
+
+```
+
+![role_colomn](image-5.png)
+
+Atribuire roluri prin interogare SQl :
+
+```sql
+UPDATE users SET role = 'admin' WHERE email = 'admin@example.com';
+UPDATE users SET role = 'user' WHERE email = 'user@example.com';
+
+```
+
 ## №6. Deconectarea și protecția împotriva CSRF
 
 1. Adăugați un buton pentru deconectarea utilizatorului pe pagină.
