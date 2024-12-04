@@ -1426,6 +1426,157 @@ Am să continui cu proiectul anterior (todo-app).
    adăugați validarea direct în controller.
 6. Verificați dacă înregistrarea și autentificarea utilizatorului funcționează corect.
 
+Crearea controllerului `AuthController` :
+`php artisan make:controller AuthController`.
+
+Adăugarea metodelor pentru înregistrarea, autentificarea și deconectarea utilizatorului în `AuthController` :
+
+```php
+
+
+ namespace App\Http\Controllers;
+
+ use App\Models\User;
+ use Illuminate\Http\Request;
+ use Illuminate\Support\Facades\Auth;
+ use Illuminate\Support\Facades\Hash;
+
+ class AuthController extends Controller
+ {
+    // 1. Afișarea formularului de înregistrare
+    public function register()
+    {
+        return view('auth.register');
+    }
+
+    // 2. Procesarea datelor din formularul de înregistrare
+    public function storeRegister(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users',
+            'password' => 'required|string|min:6|confirmed',
+        ]);
+
+        // Crearea unui nou utilizator
+        User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
+        ]);
+
+        return redirect()->route('login')->with('success', 'Contul a fost creat cu succes!');
+    }
+
+    // 3. Afișarea formularului de autentificare
+    public function login()
+    {
+        return view('auth.login');
+    }
+
+    // 4. Procesarea datelor din formularul de autentificare
+    public function storeLogin(Request $request)
+    {
+        $credentials = $request->validate([
+            'email' => 'required|string|email',
+            'password' => 'required|string',
+        ]);
+
+        if (Auth::attempt($credentials)) {
+            $request->session()->regenerate();
+            return redirect()->intended('dashboard')->with('success', 'Autentificare reușită!');
+        }
+
+        return back()->withErrors([
+            'email' => 'Datele introduse nu sunt corecte.',
+        ]);
+    }
+
+    // 5. Deconectarea utilizatorului
+    public function logout(Request $request)
+    {
+        Auth::logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        return redirect('/')->with('success', 'Te-ai deconectat cu succes!');
+    }
+ }
+
+```
+
+Crearea și adăugarea rutelor în `web.php` :
+
+```php
+use App\Http\Controllers\AuthController;
+
+Route::get('/register', [AuthController::class, 'register'])->name('register');
+Route::post('/register', [AuthController::class, 'storeRegister']);
+
+Route::get('/login', [AuthController::class, 'login'])->name('login');
+Route::post('/login', [AuthController::class, 'storeLogin']);
+
+Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+
+```
+
+Crearea fișierelor `register.blade.php` și `login.blade.php`.
+
+Crearea unei clase separate `Request` pentru validare:
+
+`php artisan make:request RegisterRequest`.
+
+Reguliel de validare din `RegisterRequest` :
+
+```php
+
+ namespace App\Http\Requests;
+
+ use Illuminate\Foundation\Http\FormRequest;
+
+ class RegisterRequest extends FormRequest
+  {
+    /**
+     * Determine if the user is authorized to make this request.
+     */
+    public function authorize(): bool
+    {
+        return true;
+    }
+
+    /**
+     * Get the validation rules that apply to the request.
+     *
+     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
+     */
+    public function rules(): array
+    {
+        return [
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|unique:users,email',
+            'password' => 'required|string|min:8|confirmed',
+        ];
+    }
+ }
+
+```
+
+Înlocuirea `Request` cu `RegisterRequest` în metoda `storeRegister()` în `AuthController`:
+
+```php
+
+public function storeRegister(RegisterRequest $request)
+    {
+    User::create([
+        'name' => $request->name,
+        'email' => $request->email,
+        'password' => bcrypt($request->password),
+        ]);
+
+        return redirect()->route('login')->with('success', 'Contul a fost creat cu succes!');
+    }
+```
+
 ## №3. Autentificarea utilizatorilor cu ajutorul componentelor existente
 
 1. Instalați biblioteca **Laravel Breeze** (sau Fortify, Jetstream) pentru o configurare rapidă a  
